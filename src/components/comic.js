@@ -28,6 +28,7 @@ class Comic extends Component {
   }
 
   componentDidMount() {
+    console.log(this.state.loaded)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,7 +49,7 @@ class Comic extends Component {
   render() {
     return (
         <div className="comic-wrapper">
-          <div style={{display: this.state.loaded ? 'none' : 'initial'}}><MyLoader className={'loader'}/></div>
+          <div style={{display: this.state.loaded===true ? 'none' : 'initial'}}><MyLoader className={'loader'}/></div>
           <div className="title" style={{display: !this.state.loaded ? 'none' : 'initial'}}>{this.props.comic.title}</div>
           <img alt={this.props.comic.alt} src={this.props.url} style={{visibility: !this.state.loaded ? 'hidden' : 'visible'}} onLoad={this.imageHasLoaded}/>
         </div>

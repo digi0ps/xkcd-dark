@@ -84,7 +84,7 @@ class Home extends Component {
   render() {
     return (
       <div className="home is-unselectable">
-        <p className="credit">All comics displayed here are Randall Munroe's creations, obtained from <a href="https://xkcd.com">xkcd.com</a><br/>
+        <p className="credit">All comics displayed here are Randall Munroe's creations, obtained from <a href="https://xkcd.com">xkcd.com</a>.<br/>
         For bug fixes/feature requests, head over to the <a href="https://github.com/jeremyphilemon/xkcd-dark">repository</a> here.</p>
         <div className="navigation">
           <button className="navigation-button" onClick={this.navigate.bind(null, -100)}>[First]</button>

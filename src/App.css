@@ -11,6 +11,9 @@ html {
 
 .navigation {
   display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+  word-wrap: break-word;
 }
 
 .navigation-button {
@@ -18,7 +21,7 @@ html {
   font-weight: bold;
   font-family: monospace;
   font-size: 1.25rem;
-  margin: 1rem;
+  margin-top: 1rem;
   cursor: pointer;
 }
 
@@ -58,6 +61,7 @@ button {
 }
 
 .title {
+  margin-top: 0.5rem;
   justify-content: center;
 }
 
@@ -68,7 +72,8 @@ button {
 
 .credit {
   color: #bdbdbd;
-  font-size: 0.5rem;
+  letter-spacing: -0.5px;
+  font-size: 1rem;
   font-family: monospace;
   text-align: center;
   margin-bottom: -0.25rem;
@@ -92,4 +97,10 @@ a:hover {
 /* selected link */
 a:active {
   color: #6534ff !important;
+}
+
+@media(max-width: 375px) {
+  .navigation-button {
+    font-size: 1rem !important;
+  }
 }
