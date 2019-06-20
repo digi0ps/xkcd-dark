@@ -45,4 +45,18 @@ html {
 
 button {
   cursor: pointer;
+  background: #191919;
+  border: none;
+}
+
+.is-unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+:focus {
+    outline: 0 !important;
 }

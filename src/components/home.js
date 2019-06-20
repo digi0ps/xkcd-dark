@@ -44,12 +44,12 @@ class Home extends Component {
 
   render() {
     return (
-      <div className="home">
+      <div className="home is-unselectable">
         <div className="navigation">
-          <div className="navigation-button" onClick={this.navigate.bind(null, -100)}>[First]</div>
-          <div className="navigation-button" onClick={this.navigate.bind(null, 0)}>[Prev]</div>
-          <div className="navigation-button" onClick={this.navigate.bind(null, 1)}>[Next]</div>
-          <div className="navigation-button" onClick={this.navigate.bind(null, 100)}>[Latest]</div>
+          <button className="navigation-button" onClick={this.navigate.bind(null, -100)}>[First]</button>
+          <button className="navigation-button" onClick={this.navigate.bind(null, 0)}>[Prev]</button>
+          <button className="navigation-button" onClick={this.navigate.bind(null, 1)}>[Next]</button>
+          <button className="navigation-button" onClick={this.navigate.bind(null, 100)}>[Latest]</button>
         </div>
         <div className="comic">
           <Comic number={this.state.number} sendNumberToParent={this.getLatestNumber}/>
