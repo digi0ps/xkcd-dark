@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './../App.css';
 
 import Comic from './comic.js';
+import Navigation from './navigation';
 import * as api from '../helpers/api';
 
 import { withRouter } from 'react-router-dom';
@@ -9,79 +10,80 @@ import { withRouter } from 'react-router-dom';
 class Home extends Component {
   constructor(props) {
     super(props);
+
+    // Deconstruct passed props instead of this.props
+    const {
+      match: { params },
+    } = props;
+
     this.state = {
       comic: { img: '', num: -1 },
-      number: this.props.match.params.number
-        ? this.props.match.params.number
-        : '',
+      number: Number(params.number) || '',
       shouldUpdateLock: true,
     };
   }
 
-  fetchComic = number => {
-    api
-      .fetchNumber(number)
-      .then(comic => {
-        let url = comic.imgRetina || comic.img;
+  setComic = comic => {
+    let url = comic.imgRetina || comic.img;
 
-        this.setState(
-          {
-            comic,
-            url,
-            shouldUpdateLock: true,
-          },
-          () => {
-            this.props.history.push(`/${comic.num}`);
-          }
-        );
-      })
-      .catch();
+    this.setState(
+      {
+        comic,
+        url,
+        shouldUpdateLock: true,
+      },
+      () => {
+        this.props.history.push(`/${comic.num}`);
+      }
+    );
   };
 
-  componentDidMount() {
-    this.fetchComic(this.state.number);
-    fetch('https://xkcd.now.sh/').then(response => {
-      response.json().then(parsedJSON => {
-        this.setState({
-          upper: parsedJSON.num,
-        });
-      });
+  fetchComic = async number => {
+    const comic = await api.fetchNumber(number).catch();
+    this.setComic(comic);
+  };
+
+  async componentDidMount() {
+    const latestcomic = await api.fetchToday();
+
+    this.setState({
+      upper: latestcomic.num,
     });
+
+    if (this.state.number) {
+      this.fetchComic(this.state.number);
+    } else {
+      this.setComic(latestcomic);
+    }
   }
 
-  updateComic = number => {
-    this.fetchComic(number);
-  };
+  navigate = option => () => {
+    const { number, upper } = this.state;
 
-  navigate = option => {
-    if (option === 42) {
-      const random = Math.floor(Math.random() * (this.state.upper - 1 + 1)) + 1;
+    if (option === 'random') {
+      const random = Math.floor(Math.random() * (upper - 1 + 1)) + 1;
       this.setState({
         number: random,
         shouldUpdateLock: false,
       });
-    } else if (option === 0 && this.state.number >= 1) {
+    } else if (option === 'prev' && number > 1) {
       this.setState({
-        number:
-          this.state.number === 1 ? this.state.number : this.state.number - 1,
+        number: number - 1,
         shouldUpdateLock: false,
       });
-    } else if (option === -100) {
+    } else if (option === 'first') {
       this.setState({
         number: 1,
         shouldUpdateLock: false,
       });
-    } else if (option === 100) {
+    } else if (option === 'latest' && number !== upper) {
       this.setState({
-        number: this.state.upper,
+        number: upper,
         shouldUpdateLock: false,
       });
-    } else {
+    } else if (option === 'next' && number < upper) {
       this.setState({
-        number:
-          this.state.number + 1 > this.state.upper
-            ? this.state.upper
-            : this.state.number + 1,
+        number: number + 1,
         shouldUpdateLock: false,
       });
     }
@@ -99,44 +101,15 @@ class Home extends Component {
           </a>{' '}
           here.
         </p>
-        <div className="navigation">
-          <button
-            className="navigation-button"
-            onClick={this.navigate.bind(null, -100)}
-          >
-            [First]
-          </button>
-          <button
-            className="navigation-button"
-            onClick={this.navigate.bind(null, 0)}
-          >
-            [Prev]
-          </button>
-          <button
-            className="navigation-button"
-            onClick={this.navigate.bind(null, 42)}
-          >
-            [Random]
-          </button>
-          <button
-            className="navigation-button"
-            onClick={this.navigate.bind(null, 1)}
-          >
-            [Next]
-          </button>
-          <button
-            className="navigation-button"
-            onClick={this.navigate.bind(null, 100)}
-          >
-            [Latest]
-          </button>
-        </div>
+
+        <Navigation navigate={this.navigate} />
+
         <div className="comic">
           <Comic
             number={this.state.number}
             comic={this.state.comic}
             url={this.state.url}
-            updateComicFn={this.updateComic}
+            updateComicFn={this.fetchComic}
             shouldUpdateLock={this.state.shouldUpdateLock}
           />
         </div>
