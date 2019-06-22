@@ -2,22 +2,39 @@ import { API } from './core';
 
 const base = 'https://xkcd.now.sh/';
 
-const instance = new API(base);
+const api = new API(base);
 
-const preloadImage = imageUrl => {
-  const img = new Image();
-  img.src = imageUrl;
+/**
+ * Adds an extra field which choose imgRetina or img
+ */
+const imageUrlMiddleware = data => {
+  data.url = data.imgRetina || data.img;
+  return data;
 };
 
+/**
+ * Makes the browser fetch the image beforehand.
+ * Once the image is fetched, it is cached by the browser automatically.
+ */
+const preloadImageMiddleware = data => {
+  const img = new Image();
+  img.src = data.url;
+  return data;
+};
+
+/**
+ * Middlewares are applied on the same order they are set.
+ */
+api.use(imageUrlMiddleware);
+api.use(preloadImageMiddleware);
+
+/**
+ * Storing this in session storage, because the response changes everyday
+ */
 export const fetchToday = () => {
-  return instance.get({ url: '', type: 'session' });
+  return api.get({ url: '', type: 'session' });
 };
 
 export const fetchNumber = number => {
-  return instance.get({ url: number }).then(data => {
-    data.url = data.imgRetina || data.img;
-    preloadImage(data.url);
-
-    return data;
-  });
+  return api.get({ url: number });
 };

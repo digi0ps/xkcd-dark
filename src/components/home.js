@@ -20,19 +20,14 @@ class Home extends Component {
     this.state = {
       comic: { img: '', num: -1 },
       number: Number(params.number) || '',
-      shouldUpdateLock: true,
       loading: true,
     };
   }
 
   setComic = comic => {
-    let url = comic.imgRetina || comic.img;
-
     this.setState(
       {
         comic,
-        url,
-        shouldUpdateLock: true,
       },
       () => {
         this.props.history.push(`/${comic.num}`);
@@ -75,7 +70,7 @@ class Home extends Component {
     this.preload(number, upper);
   }
 
-  async componentWillUpdate(nextProps, { number, upper }) {
+  async componentWillUpdate(_, { number, upper }) {
     if (this.state.number !== number) {
       await this.fetchComic(number);
       this.preload(number, upper);
