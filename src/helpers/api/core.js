@@ -4,13 +4,12 @@ export class API {
   }
 
   makeRequest(url) {
-    return fetch(this.base + url).then(res => res.json());
+    return fetch(url).then(res => res.json());
   }
 
   get({ url, type = 'local' }) {
     const cache = new Cache(type);
-    const _url = url === undefined ? url : '';
-    console.log('uff', url, _url);
+    const _url = url === undefined ? this.base : this.base + url;
 
     if (cache.isValid && cache.get(_url)) {
       return cache.get(_url);
