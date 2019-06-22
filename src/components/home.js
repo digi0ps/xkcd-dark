@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './../App.css';
 
-import Comic from './comic.js';
+import Comic from './comic';
+import Loader from './loader';
 import Navigation from './navigation';
 import * as api from '../helpers/api';
 
@@ -20,6 +21,7 @@ class Home extends Component {
       comic: { img: '', num: -1 },
       number: Number(params.number) || '',
       shouldUpdateLock: true,
+      loading: true,
     };
   }
 
@@ -39,6 +41,9 @@ class Home extends Component {
   };
 
   fetchComic = async number => {
+    this.setState({
+      loading: true,
+    });
     const comic = await api.fetchNumber(number).catch();
     this.setComic(comic);
   };
@@ -70,8 +75,9 @@ class Home extends Component {
     this.preload(number, upper);
   }
 
-  componentWillUpdate(nextProps, { number, upper }) {
+  async componentWillUpdate(nextProps, { number, upper }) {
     if (this.state.number !== number) {
+      await this.fetchComic(number);
       this.preload(number, upper);
     }
   }
@@ -83,29 +89,30 @@ class Home extends Component {
       const random = Math.floor(Math.random() * (upper - 1 + 1)) + 1;
       this.setState({
         number: random,
-        shouldUpdateLock: false,
       });
     } else if (option === 'prev' && number > 1) {
       this.setState({
         number: number - 1,
-        shouldUpdateLock: false,
       });
     } else if (option === 'first') {
       this.setState({
         number: 1,
-        shouldUpdateLock: false,
       });
     } else if (option === 'latest' && number !== upper) {
       this.setState({
         number: upper,
-        shouldUpdateLock: false,
       });
     } else if (option === 'next' && number < upper) {
       this.setState({
         number: number + 1,
-        shouldUpdateLock: false,
       });
     }
+  };
+
+  onLoadHandler = () => {
+    this.setState({
+      loading: false,
+    });
   };
 
   render() {
@@ -125,12 +132,11 @@ class Home extends Component {
 
         <div className="comic">
           <Comic
-            number={this.state.number}
-            comic={this.state.comic}
-            url={this.state.url}
-            updateComicFn={this.fetchComic}
-            shouldUpdateLock={this.state.shouldUpdateLock}
+            {...this.state.comic}
+            isLoading={this.state.loading}
+            onLoadHandler={this.onLoadHandler}
           />
+          {this.state.loading ? <Loader /> : null}
         </div>
       </div>
     );

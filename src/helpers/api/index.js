@@ -15,8 +15,8 @@ export const fetchToday = () => {
 
 export const fetchNumber = number => {
   return instance.get({ url: number }).then(data => {
-    const imgurl = data.imgRetina || data.img;
-    preloadImage(imgurl);
+    data.url = data.imgRetina || data.img;
+    preloadImage(data.url);
 
     return data;
   });

@@ -33,6 +33,12 @@ html {
   max-width: 40rem;
 }
 
+.loader {
+  margin-top: 3rem;
+  width: 40rem;
+  filter: brightness(1.2);
+}
+
 .title {
   color: #bdbdbd;
   font-weight: bold;
@@ -99,7 +105,7 @@ a:active {
   color: #6534ff !important;
 }
 
-@media(max-width: 375px) {
+@media (max-width: 375px) {
   .navigation-button {
     font-size: 1rem !important;
   }
