@@ -43,6 +43,15 @@ class Home extends Component {
     this.setComic(comic);
   };
 
+  preload(number, upper) {
+    if (number && number < upper) {
+      api.fetchNumber(number + 1);
+    }
+    if (number && number > 1) {
+      api.fetchNumber(number - 1);
+    }
+  }
+
   async componentDidMount() {
     const latestcomic = await api.fetchToday();
 
@@ -50,10 +59,20 @@ class Home extends Component {
       upper: latestcomic.num,
     });
 
+    const { number, upper } = this.state;
+
     if (this.state.number) {
-      this.fetchComic(this.state.number);
+      await this.fetchComic(this.state.number);
     } else {
       this.setComic(latestcomic);
+    }
+
+    this.preload(number, upper);
+  }
+
+  componentWillUpdate(nextProps, { number, upper }) {
+    if (this.state.number !== number) {
+      this.preload(number, upper);
     }
   }
 
